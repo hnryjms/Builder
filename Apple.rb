@@ -24,10 +24,19 @@ module Builder
 			self.sdk = 'iphoneos'
 
 			# Private options
-			@xctool_path = `which xctool`
-			@xctool_path.strip!
-			@xcodebuild_path = `which xcodebuild`
-			@xcodebuild_path.strip!
+			if ENV['XCTOOL_PATH']
+				@xctool_path = ENV['XCTOOL_PATH']
+			else
+				@xctool_path = `which xctool`
+				@xctool_path.strip!
+			end
+			if ENV['XCODEBUILD_PATH']
+				@xcodebuild_path = ENV['XCODEBUILD_PATH']
+			else
+				@xcodebuild_path = `which xcodebuild`
+				@xcodebuild_path.strip!
+			end
+			
 
 			@reporters = [ ]
 			if (ENV['JENKINS_HOME'] || 
@@ -88,7 +97,7 @@ module Builder
 
 			args = _xctool(opts)
 			args ||= _xcodebuild(opts)
-			
+
 			args.push('archive');
 
 			exportFormat = output.end_with?('xcarchive') ? 'xcarchive' : File.extname(output)[1..-1]

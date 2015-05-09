@@ -84,6 +84,19 @@ App.test(junit='./Results/junit.xml')
 App.archive(output="./#{self.scheme}.app", dSYMs=nil)
 ```
 
+##### Environment variables
+
+The Apple platform script optionally can take several environment variables to modify the behavior.
+
+**XCTOOL_PATH** will explicitly define the path to [xctool](https://github.com/facebook/xctool/) to be used when executing builds and tests. The default is to find `xctool` from inside the `$PATH` settings.
+
+**XCODEBUILD_PATH** will explicitly define the path to `xcodebuild` to be used when executing builds and tests. Keep in mind that `xctool` is used in favor of `xcodebuild`. The default is to find `xcodebuild` from inside the `$PATH` settings (`/usr/bin/xcodebuild`).
+
+```
+$ XCTOOL_PATH=/usr/local/bin/xctool ./MyScript.rb
+$ XCODEBUILD_PATH=/Applications/Xcode-6.1.app/Contents/Developer/usr/bin/xcodebuild ./MyScript.rb
+```
+
 #### More
 
 More platforms are hopefully coming soon. Pull requests are very welcome!
