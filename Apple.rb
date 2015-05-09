@@ -69,6 +69,9 @@ module Builder
 			_describe('Testing', opts)
 
 			args = _xctool(opts)
+			if args == nil
+				raise "Testing requires `xctool` to be installed on this computer or server."
+			end
 
 			args.push('test');
 
@@ -84,6 +87,8 @@ module Builder
 			_describe('Archiving', opts)
 
 			args = _xctool(opts)
+			args ||= _xcodebuild(opts)
+			
 			args.push('archive');
 
 			exportFormat = output.end_with?('xcarchive') ? 'xcarchive' : File.extname(output)[1..-1]
