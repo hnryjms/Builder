@@ -14,6 +14,7 @@ module Builder
 	class Apple
 		attr_accessor :scheme, :location
 		attr_accessor :configuration, :sdk
+		attr_accessor :cocoapods
 
 		def initialize(location, scheme)
 			self.location = location
@@ -22,6 +23,9 @@ module Builder
 			# Public options
 			self.configuration = 'Release'
 			self.sdk = 'iphoneos'
+
+			cocoapod_file = File.expand_path(File.dirname(location)) + "/Podfile"
+			self.cocoapods = File.exist?(cocoapod_file)
 
 			# Private options
 			if ENV['XCTOOL_PATH']
@@ -37,6 +41,17 @@ module Builder
 				@xcodebuild_path.strip!
 			end
 			
+			if self.cocoapods
+				@cocoapods_installed = false
+				@cocoapods_directory = File.expand_path(File.dirname(location))
+
+				if ENV['COCOAPODS_PATH']
+					@cocoapods_path = ENV['XCODEBUILD_PATH']
+				else
+					@cocoapods_path = `which pod`
+					@cocoapods_path.strip!
+				end
+			end
 
 			@reporters = [ ]
 			if (ENV['JENKINS_HOME'] || 
@@ -58,6 +73,7 @@ module Builder
 
 			args.push('build');
 
+			_podinstall()
 			_run(args)
 		end
 		def test(junit='./Results/junit.xml')
@@ -84,6 +100,7 @@ module Builder
 
 			args.push('test');
 
+			_podinstall()
 			_run(args)
 
 			if didChangeSDK
@@ -118,6 +135,7 @@ module Builder
 			# xcodebuild needs -archivePath AFTER the archive command
 			args.push(*['-archivePath', archivePath])
 
+			_podinstall()
 			_run(args)
 
 			if exportFormat != 'xcarchive'
@@ -198,6 +216,7 @@ module Builder
 
 			return args
 		end
+		private
 		def _xcodebuild(opts)
 			args = [ @xcodebuild_path ]
 			opts.each { |key, value|
@@ -212,6 +231,18 @@ module Builder
 			}
 
 			return args
+		end
+		private
+		def _podinstall()
+			if self.cocoapods && !@cocoapods_installed
+				puts "Installing Cocoapods dependencies"
+
+				args = [ @cocoapods_path, 'install' ]
+
+				args.push("--project-directory=#{@cocoapods_directory}")
+
+				_run(args)
+			end
 		end
 		private
 		def _run(arguments)

@@ -56,6 +56,9 @@ The Apple platform supports iOS and OS X apps, and can export to all formats
 supported by the `xcodebuild` export functionality (app, ipa, pkg). **Builder**
 can take in both *xcworkspace* and *xcodeproj* locations, and requires a single scheme.
 
+This script also automatically checks for [Cocoapods](https://cocoapods.org) and will
+ensure that Cocoapods dependencies are installed before building, testing or archiving.
+
 ```ruby
 # initializer
 #
@@ -68,6 +71,9 @@ App.configuration = 'Release'
 
 # build sdk (default 'iphoneos', ALWAYS 'iphonesimulator' for tests)
 App.sdk = 'iphoneos'
+
+# prevent automatic installation of Cocoapods dependencies
+App.cocoapods = false
 
 # builds the scheme
 App.build()
@@ -86,11 +92,16 @@ App.archive(output="./#{self.scheme}.app", dSYMs=nil)
 
 ##### Environment variables
 
-The Apple platform script optionally can take several environment variables to modify the behavior.
+The Apple platform script optionally can take several environment variables to modify
+the behavior.
 
-**XCTOOL_PATH** will explicitly define the path to [xctool](https://github.com/facebook/xctool/) to be used when executing builds and tests. The default is to find `xctool` from inside the `$PATH` settings.
+**XCTOOL_PATH** will explicitly define the path to [xctool](https://github.com/facebook/xctool/)
+to be used when executing builds and tests. The default is to find `xctool` from inside the
+`$PATH` settings.
 
-**XCODEBUILD_PATH** will explicitly define the path to `xcodebuild` to be used when executing builds and tests. Keep in mind that `xctool` is used in favor of `xcodebuild`. The default is to find `xcodebuild` from inside the `$PATH` settings (`/usr/bin/xcodebuild`).
+**XCODEBUILD_PATH** will explicitly define the path to `xcodebuild` to be used when executing
+builds and tests. Keep in mind that `xctool` is used in favor of `xcodebuild`. The default is
+to find `xcodebuild` from inside the `$PATH` settings (`/usr/bin/xcodebuild`).
 
 ```
 $ XCTOOL_PATH=/usr/local/bin/xctool ./MyScript.rb
