@@ -40,7 +40,7 @@ module Builder
 
 			@reporters = [ ]
 			if (ENV['JENKINS_HOME'] || 
-				ENV['bamboo.buildKey'])
+				ENV['bamboo_buildKey'])
 				# Use plain reporting on CI Servers (since they aren't printing to a GUI window).
 				@reporters.push('plain')
 			else
