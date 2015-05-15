@@ -129,7 +129,7 @@ module Builder
 			if File.exist?(output)
 				FileUtils.rm_rf(output)
 			end
-			if File.exist?(dSYMs)
+			if dSYMs != nil && File.exist?(dSYMs)
 				FileUtils.rm_rf(dSYMs)
 			end
 			# xcodebuild needs -archivePath AFTER the archive command
