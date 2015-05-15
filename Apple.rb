@@ -103,6 +103,11 @@ module Builder
 			_podinstall()
 			_run(args)
 
+			if junit != nil
+				# remove the reporter from future xctool actions
+				@reporters.pop()
+			end
+
 			if didChangeSDK
 				# revert back to iphoneos for next commands
 				self.sdk = 'iphoneos'
@@ -238,10 +243,10 @@ module Builder
 				puts "Installing Cocoapods dependencies"
 
 				args = [ @cocoapods_path, 'install' ]
-
 				args.push("--project-directory=#{@cocoapods_directory}")
 
 				_run(args)
+				@cocoapods_installed = true
 			end
 		end
 		private
