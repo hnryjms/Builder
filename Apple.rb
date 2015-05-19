@@ -211,6 +211,10 @@ module Builder
 		private
 		def _podinstall()
 			if self.cocoapods && !@cocoapods_installed
+				if @cocoapods_path == nil
+					raise "Cocoapods is required to build #{self.scheme}"
+				end
+				
 				puts "Installing Cocoapods dependencies"
 
 				args = _escape([ @cocoapods_path, 'install' ])

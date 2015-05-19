@@ -22,7 +22,9 @@ module Builder
 			path = nil
 			if ENV[env_name]
 				path = ENV[env_name]
-				return path
+				if path == 'false'
+					path = nil
+				end
 			else
 				path = `which #{command}`
 				path.strip!
