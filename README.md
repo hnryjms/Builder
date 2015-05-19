@@ -40,7 +40,7 @@ Each platform has unique qualities that help your integration easier.
 
 ## Platforms
 
-#### Apple
+### Apple
 
 The Apple Builder supports iOS and OS X apps, and can export to all formats
 supported by `xcodebuild` (currently incldues `.app`, `.ipa`, `.pkg`). **Builder**
@@ -58,53 +58,53 @@ your app.
 
 ##### Apple Build Functions
 
-```ruby
-MyApp = Builder::Apple.new(location, scheme)
-```
-
 Instantiate a new Apple Builder object for an `xcodeproj` or `xcworkspace` location, and scheme.
 
 ```ruby
-MyApp.configuration = 'Release'
+MyApp = Builder::Apple.new(location, scheme)
 ```
 
 Set the Build Configuration to use when building & archiving your scheme (default is `Release`).
 
 ```ruby
-MyApp.sdk = 'iphoneos'
+MyApp.configuration = 'Release'
 ```
 
 Set the SDK to use when building & archiving your scheme (default is `iphoneos`). This can be
 `iphoneos8.3`, `iphonesimulator`, or any other valid SDK identifier.
 
 ```ruby
-MyApp.cocoapods = false
+MyApp.sdk = 'iphoneos'
 ```
 
 Explicitly enable or disable Cocoapods from being installed before the first build, test or
 archive action. This is automatically determined by any Podfile existance.
 
 ```ruby
-MyApp.build()
+MyApp.cocoapods = false
 ```
 
 Build the scheme and do nothing with the product.
 
 ```ruby
-MyApp.test(junit='./Results/junit.xml')
+MyApp.build()
 ```
 
 Build and test the scheme using the iOS Simulator, and write the results to a JUnit file
 for a CI Server to parse as build results. **This requires xctool to be installed.**
 
 ```ruby
-MyApp.archive(output="./#{self.scheme}.app", dSYMs=nil)
+MyApp.test(junit='./Results/junit.xml')
 ```
 
 Build and export the scheme, and write the product and corresponding dSYMs to a file. The
 output is automatically determined by the path extension; and `.app`, `.ipa`, `.pkg` are all
 currently valid. The dSYMs will be written in a `.zip` format with all `.dSYM` packages at the
 root of the archive (matching most IPA Distribution formats, i.e. HockeyApp).
+
+```ruby
+MyApp.archive(output="./#{self.scheme}.app", dSYMs=nil)
+```
 
 ---
 
@@ -126,7 +126,7 @@ $ XCODEBUILD_PATH=/Applications/Xcode-6.1.app/Contents/Developer/usr/bin/xcodebu
 $ COCOAPODS_PATH=/usr/bin/pod ./MyScript.rb
 ```
 
-#### More Platforms
+### More Platforms
 
 More platforms are hopefully coming soon. Pull requests are welcome!
 
