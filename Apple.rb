@@ -7,11 +7,12 @@
 #  Creative Commons Attribution 4.0 (CC-BY-4.0) z43 Studio.
 #
 
-require 'shellwords'
 require 'fileutils'
 
+require_relative '_base'
+
 module Builder
-	class Apple
+	class Apple < Base
 		attr_accessor :scheme, :location
 		attr_accessor :configuration, :sdk
 		attr_accessor :cocoapods
@@ -28,29 +29,14 @@ module Builder
 			self.cocoapods = File.exist?(cocoapod_file)
 
 			# Private options
-			if ENV['XCTOOL_PATH']
-				@xctool_path = ENV['XCTOOL_PATH']
-			else
-				@xctool_path = `which xctool`
-				@xctool_path.strip!
-			end
-			if ENV['XCODEBUILD_PATH']
-				@xcodebuild_path = ENV['XCODEBUILD_PATH']
-			else
-				@xcodebuild_path = `which xcodebuild`
-				@xcodebuild_path.strip!
-			end
+			@xctool_path = _path('xctool')
+			@xcodebuild_path = _path('xcodebuild')
 			
 			if self.cocoapods
 				@cocoapods_installed = false
 				@cocoapods_directory = File.expand_path(File.dirname(location))
 
-				if ENV['COCOAPODS_PATH']
-					@cocoapods_path = ENV['XCODEBUILD_PATH']
-				else
-					@cocoapods_path = `which pod`
-					@cocoapods_path.strip!
-				end
+				@cocoapods_path = _path('pod', 'cocoapods')
 			end
 
 			@reporters = [ ]
@@ -169,21 +155,6 @@ module Builder
 		end
 
 		private
-		def _describe(event, options)
-			optsLength = options.keys.reduce(0) { |max, key|
-				length = key.length
-				(length > max ? length : max)
-			}
-
-			puts ''
-			puts "#{event} #{self.scheme} with options"
-			options.each{ |name, value|
-				paddedKey = name.capitalize.ljust(optsLength)
-				puts "> #{paddedKey}  #{value}"
-			}
-			puts ''
-		end
-		private
 		def _options()
 			opts = {}
 
@@ -242,17 +213,12 @@ module Builder
 			if self.cocoapods && !@cocoapods_installed
 				puts "Installing Cocoapods dependencies"
 
-				args = [ @cocoapods_path, 'install' ]
-				args.push("--project-directory=#{@cocoapods_directory}")
+				args = _escape([ @cocoapods_path, 'install' ])
+				args << " --project-directory=\"#{@cocoapods_directory}\""
 
 				_run(args)
 				@cocoapods_installed = true
 			end
-		end
-		private
-		def _run(arguments)
-			command = arguments.is_a?(Array) ? Shellwords.join(arguments) : arguments
-			raise "Non-zero exit code running \n\n#{command}\n\n" unless system(command)
 		end
 	end
 end
