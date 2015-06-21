@@ -43,7 +43,7 @@ Each platform has unique qualities that help your integration easier.
 ### Apple
 
 The Apple Builder supports iOS and OS X apps, and can export to all formats
-supported by `xcodebuild` (currently incldues `.app`, `.ipa`, `.pkg`). **Builder**
+supported by `xcodebuild` (currently includes `.app`, `.ipa`, `.pkg`). **Builder**
 can take in both `.xcworkspace` and `.xcodeproj` locations, and each instance
 can build a single scheme from your environment.
 
